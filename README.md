@@ -54,6 +54,7 @@ $ go get google.golang.org/api/admin/directory/v1
 
 # Reference
 
+* https://developers.google.com/admin-sdk/directory/
 * https://godoc.org/google.golang.org/api/admin/directory/v1
 
 # License
