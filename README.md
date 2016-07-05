@@ -5,10 +5,10 @@ Google Apps のユーティリティコマンドです
 # Pre requirements
 
 * 管理 API を有効にします
-https://support.google.com/a/answer/60757
+  * https://support.google.com/a/answer/60757
 
 * 以下のドキュメントの "Step 1: Turn on the Directory API" を参考にして client_secret.json を入手してカレントディレクトリに置きます
-https://developers.google.com/admin-sdk/directory/v1/quickstart/go
+  * https://developers.google.com/admin-sdk/directory/v1/quickstart/go
 
 * 以下のコマンドをたたきます
 
