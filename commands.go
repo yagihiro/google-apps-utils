@@ -61,7 +61,7 @@ var commandCreate = cli.Command{
 }
 
 func doCreate(c *cli.Context) error {
-	_, err := GetService()
+	srv, err := GetService()
 	if err != nil {
 		return nil
 	}
