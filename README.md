@@ -50,6 +50,7 @@ $ go get golang.org/x/net/context
 $ go get golang.org/x/oauth2
 $ go get golang.org/x/oauth2/google
 $ go get google.golang.org/api/admin/directory/v1
+$ go get github.com/urfave/cli
 ```
 
 # Reference
