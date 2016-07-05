@@ -2,6 +2,15 @@
 
 Google Apps のユーティリティコマンドです
 
+# Installation
+
+```
+$ go get github.com/yagihiro/google-apps-utils
+$ go install github.com/yagihiro/google-apps-utils
+$ export PATH=$PATH:$GOPATH/bin
+$ google-apps-utils --help
+```
+
 # Pre requirements
 
 * 管理 API を有効にします
@@ -20,25 +29,18 @@ $ go get golang.org/x/oauth2/google
 $ go get google.golang.org/api/admin/directory/v1
 ```
 
-## Build from Source
-
-まだできないけどこうなる予定です
-
-```
-$ go get github.com/yagihiro/google-apps-utils
-$ go install github.com/yagihiro/google-apps-utils
-```
-
 # Run
 
 * ユーザー一覧を表示
+
 ```
-$ go run list.go
+$ google-apps-utils list
 ```
 
 * ユーザーを追加
+
 ```
-$ go run add.go givenname familyname email
+$ google-apps-utils create -g givenname -f familyname -e primaryemail
 ```
 
 # Reference
