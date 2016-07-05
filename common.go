@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -10,9 +11,36 @@ import (
 	"os/user"
 	"path/filepath"
 
+	"google.golang.org/api/admin/directory/v1"
+
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
+
+func GetService() (*admin.Service, error) {
+	b, err := ioutil.ReadFile("client_secret.json")
+	if err != nil {
+		log.Fatalf("Unable to read client secret file: %v", err)
+		return nil, err
+	}
+
+	config, err := google.ConfigFromJSON(b, admin.AdminDirectoryUserScope)
+	if err != nil {
+		log.Fatalf("Unable to parse client secret file to config: %v", err)
+		return nil, err
+	}
+
+	ctx := context.Background()
+	client := GetClient(ctx, config)
+	srv, err := admin.New(client)
+	if err != nil {
+		log.Fatalf("Unable to retrieve directory Client %v", err)
+		return nil, err
+	}
+
+	return srv, err
+}
 
 func GetClient(ctx context.Context, config *oauth2.Config) *http.Client {
 	cacheFile, err := tokenCacheFile()
