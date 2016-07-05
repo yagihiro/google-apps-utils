@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
 	"os/user"
 	"path/filepath"
+	"time"
 
 	"google.golang.org/api/admin/directory/v1"
 
@@ -17,6 +19,16 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
+
+func RandomString(length int) string {
+	rand.Seed(time.Now().UTC().UnixNano())
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	result := make([]byte, length)
+	for i := 0; i < length; i++ {
+		result[i] = chars[rand.Intn(len(chars))]
+	}
+	return string(result)
+}
 
 func GetService() (*admin.Service, error) {
 	b, err := ioutil.ReadFile("client_secret.json")

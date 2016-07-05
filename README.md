@@ -40,3 +40,11 @@ $ go run list.go
 ```
 $ go run add.go givenname familyname email
 ```
+
+# Reference
+
+* https://godoc.org/google.golang.org/api/admin/directory/v1
+
+# License
+
+MIT License
