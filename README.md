@@ -20,6 +20,15 @@ $ go get golang.org/x/oauth2/google
 $ go get google.golang.org/api/admin/directory/v1
 ```
 
+## Build from Source
+
+まだできないけどこうなる予定です
+
+```
+$ go get github.com/yagihiro/google-apps-utils
+$ go install github.com/yagihiro/google-apps-utils
+```
+
 # Run
 
 * ユーザー一覧を表示
