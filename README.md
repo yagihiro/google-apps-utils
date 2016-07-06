@@ -16,9 +16,15 @@ $ export PATH=$PATH:$GOPATH/bin
 
 https://support.google.com/a/answer/60757
 
-以下のドキュメントの "Step 1: Turn on the Directory API" を参考にして client_secret.json を入手してカレントディレクトリに置きます
+以下のドキュメントの "Step 1: Turn on the Directory API" を参考にして client_secret.json を入手します
 
 https://developers.google.com/admin-sdk/directory/v1/quickstart/go
+
+以下のパスに client_secret.json を置きます
+
+```
+$HOME/.google-apps-utils/client_secret.json
+```
 
 実行します
 ```

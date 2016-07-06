@@ -31,7 +31,7 @@ func RandomString(length int) string {
 }
 
 func GetService() (*admin.Service, error) {
-	b, err := ioutil.ReadFile("client_secret.json")
+	b, err := getClientSecret()
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 		return nil, err
@@ -44,7 +44,7 @@ func GetService() (*admin.Service, error) {
 	}
 
 	ctx := context.Background()
-	client := GetClient(ctx, config)
+	client := getClient(ctx, config)
 	srv, err := admin.New(client)
 	if err != nil {
 		log.Fatalf("Unable to retrieve directory Client %v", err)
@@ -54,7 +54,44 @@ func GetService() (*admin.Service, error) {
 	return srv, err
 }
 
-func GetClient(ctx context.Context, config *oauth2.Config) *http.Client {
+func isExist(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
+func profilePath() (string, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+
+	path := filepath.Join(usr.HomeDir, ".google-apps-utils")
+	if !isExist(path) {
+		os.MkdirAll(path, 0700)
+	}
+
+	return path, nil
+}
+
+func getClientSecret() ([]byte, error) {
+	path, err := profilePath()
+	if err != nil {
+		log.Fatalf("Unable to get profile path: %v", err)
+		return nil, err
+	}
+
+	jsonPath := filepath.Join(path, "client_secret.json")
+
+	b, err := ioutil.ReadFile(jsonPath)
+	if err != nil {
+		log.Fatalf("Unable to read client secret file: %v", err)
+		return nil, err
+	}
+
+	return b, err
+}
+
+func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
 	cacheFile, err := tokenCacheFile()
 	if err != nil {
 		log.Fatalf("Unable to get path to cached credential fiel. %v", err)
@@ -89,17 +126,17 @@ func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 }
 
 func tokenCacheFile() (string, error) {
-	usr, err := user.Current()
+	path, err := profilePath()
 	if err != nil {
+		log.Fatalf("Unable to get profile path: %v", err)
 		return "", err
 	}
 
-	tokenCacheDir := filepath.Join(usr.HomeDir, ".credentials")
-	os.MkdirAll(tokenCacheDir, 0700)
+	if !isExist(path) {
+		os.MkdirAll(path, 0700)
+	}
 
-	//log.Printf("tokenCacheDir: %v", tokenCacheDir)
-
-	return filepath.Join(tokenCacheDir, url.QueryEscape("admin-directory_v1-go-quickstart.json")), err
+	return filepath.Join(path, url.QueryEscape("token.json")), err
 }
 
 func tokenFromFile(file string) (*oauth2.Token, error) {

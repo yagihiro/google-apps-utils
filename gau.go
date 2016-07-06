@@ -8,10 +8,10 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "gau"
+	app.Name = "google-apps-utils"
 	app.Version = Version
 	app.Author = "Hiroki Yagita"
-	app.Usage = "gau -- Google Apps Utils"
+	app.Usage = "Google Apps Utils with Directory API"
 	app.Commands = Commands
 	app.Run(os.Args)
 }
