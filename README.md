@@ -34,19 +34,27 @@ $ google-apps-utils --help
 
 # Run
 
-## ユーザー一覧を表示
+### ユーザー一覧を表示
 
 ドメインに所属する現在の全ユーザーリストをターミナルに表示します。
 ```
 $ google-apps-utils list
 ```
 
-## ユーザーを追加
+### ユーザーを追加
 
 ユーザーを追加します。ターミナルに初期パスワードが表示されるので、primaryemail と合わせてユーザーにお伝えください。
 ```
 $ google-apps-utils create -g givenname -f familyname -e primaryemail
 ```
+
+# Files
+
+* $HOME/.google-apps-utils/client_secret.json
+  * OAuth Client Secret です
+  * 詳細は [こちら](https://developers.google.com/admin-sdk/directory/v1/quickstart/go) を参照してください
+* $HOME/.google-apps-utils/token.json
+  * OAuth token のキャッシュファイルです
 
 # 開発者向け
 
