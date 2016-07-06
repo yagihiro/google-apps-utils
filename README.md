@@ -34,14 +34,16 @@ $ google-apps-utils --help
 
 # Run
 
-* ユーザー一覧を表示
+## ユーザー一覧を表示
 
+ドメインに所属する現在の全ユーザーリストをターミナルに表示します。
 ```
 $ google-apps-utils list
 ```
 
-* ユーザーを追加
+## ユーザーを追加
 
+ユーザーを追加します。ターミナルに初期パスワードが表示されるので、primaryemail と合わせてユーザーにお伝えください。
 ```
 $ google-apps-utils create -g givenname -f familyname -e primaryemail
 ```
