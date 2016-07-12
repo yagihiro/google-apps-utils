@@ -48,6 +48,13 @@ $ google-apps-utils list
 $ google-apps-utils create -g givenname -f familyname -e primaryemail
 ```
 
+### グループ一覧を表示
+
+ドメインに所属する現在の全グループリストをターミナルに表示します。
+```
+$ google-apps-utils grouplist
+```
+
 # Files
 
 * $HOME/.google-apps-utils/client_secret.json
