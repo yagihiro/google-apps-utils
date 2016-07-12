@@ -7,9 +7,9 @@ Google Apps のユーティリティコマンドです
 google-apps-utils をインストールします
 
 ```
+$ export GOPATH=/path/to/your/gopath
+$ export PATH=$GOPATH/bin:$PATH
 $ go get github.com/yagihiro/google-apps-utils
-$ go install github.com/yagihiro/google-apps-utils
-$ export PATH=$PATH:$GOPATH/bin
 ```
 
 管理 API を有効にします
