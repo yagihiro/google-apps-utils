@@ -55,6 +55,13 @@ $ google-apps-utils create -g givenname -f familyname -e primaryemail
 $ google-apps-utils grouplist
 ```
 
+### グループを追加
+
+グループを追加します。
+```
+$ google-apps-utils groupcreate -e email -d description -n name
+```
+
 ### トークンのリセット
 
 ローカルにキャッシュ済みのトークンをリセットします。
