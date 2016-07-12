@@ -12,6 +12,7 @@ import (
 var Commands = []cli.Command{
 	commandList,
 	commandCreate,
+	commandGroupList,
 }
 
 // list ------------------------------------------------
@@ -29,7 +30,7 @@ func doList(c *cli.Context) error {
 		return nil
 	}
 
-	r, err := srv.Users.List().Customer("my_customer").MaxResults(10).OrderBy("email").Do()
+	r, err := srv.Users.List().Customer("my_customer").OrderBy("email").Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve users in domain. %v", err)
 	}
@@ -89,6 +90,38 @@ func doCreate(c *cli.Context) error {
 		log.Fatalf("Cannot create user in domain. %v", err)
 	} else {
 		log.Fatalf("Succeed to create user: %v", user2)
+	}
+
+	return nil
+}
+
+// group list ----------------------------------------------
+
+var commandGroupList = cli.Command{
+	Name:        "grouplist",
+	Usage:       "Show current groups",
+	Description: "Show current groups on Google Apps for Work",
+	Action:      doGroupList,
+}
+
+func doGroupList(c *cli.Context) error {
+	srv, err := GetService()
+	if err != nil {
+		return nil
+	}
+
+	r, err := srv.Groups.List().Customer("my_customer").Do()
+	if err != nil {
+		log.Fatalf("Unable to retrieve groups in domain. %v", err)
+	}
+
+	count := len(r.Groups)
+	if count == 0 {
+		fmt.Print("No groups found.\n")
+	} else {
+		for _, g := range r.Groups {
+			fmt.Printf("%v (%v: %v)\n", g.Email, g.Name, g.Description)
+		}
 	}
 
 	return nil
