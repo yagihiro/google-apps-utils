@@ -20,6 +20,7 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
+// RandomString は初期パスワード等で利用することを想定した length 長の文字列を返す関数です
 func RandomString(length int) string {
 	rand.Seed(time.Now().UTC().UnixNano())
 	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -30,6 +31,7 @@ func RandomString(length int) string {
 	return string(result)
 }
 
+// GetService は admin.Service をよしなに生成して返す関数です
 func GetService() (*admin.Service, error) {
 	b, err := getClientSecret()
 	if err != nil {
@@ -54,6 +56,20 @@ func GetService() (*admin.Service, error) {
 	}
 
 	return srv, err
+}
+
+// ResetToken はローカルにキャッシュ済みの oauth トークンを削除する関数です
+func ResetToken() {
+	path, err := tokenCacheFile()
+	if err != nil {
+		log.Fatalf("Unable to get path to cached credential file. %v", err)
+		return
+	}
+
+	if err := os.Remove(path); err != nil {
+		log.Fatalf("Unable to remove cached credential file. %v", err)
+		return
+	}
 }
 
 func isExist(path string) bool {
@@ -96,7 +112,7 @@ func getClientSecret() ([]byte, error) {
 func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
 	cacheFile, err := tokenCacheFile()
 	if err != nil {
-		log.Fatalf("Unable to get path to cached credential fiel. %v", err)
+		log.Fatalf("Unable to get path to cached credential file. %v", err)
 		return nil
 	}
 
