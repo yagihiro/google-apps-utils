@@ -7,4 +7,5 @@ var Commands = []cli.Command{
 	commandList,
 	commandCreate,
 	commandGroupList,
+	commandGroupCreate,
 }

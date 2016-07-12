@@ -82,7 +82,7 @@ func doCreate(c *cli.Context) error {
 	if err != nil {
 		log.Fatalf("Cannot create user in domain. %v", err)
 	} else {
-		log.Fatalf("Succeed to create user: %v", user2)
+		log.Printf("Succeed to create user: %v", user2)
 	}
 
 	return nil
