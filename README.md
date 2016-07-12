@@ -55,7 +55,7 @@ $ google-apps-utils create -g givenname -f familyname -e primaryemail
 $ google-apps-utils grouplist
 ```
 
-### グループ一覧を表示
+### トークンのリセット
 
 ローカルにキャッシュ済みのトークンをリセットします。
 ```
