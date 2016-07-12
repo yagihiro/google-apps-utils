@@ -55,6 +55,13 @@ $ google-apps-utils create -g givenname -f familyname -e primaryemail
 $ google-apps-utils grouplist
 ```
 
+### グループ一覧を表示
+
+ローカルにキャッシュ済みのトークンをリセットします。
+```
+$ google-apps-utils reset
+```
+
 # Files
 
 * $HOME/.google-apps-utils/client_secret.json
