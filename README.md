@@ -1,8 +1,10 @@
 # google-apps-utils
 
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
+
 [license]: https://github.com/yagihiro/google-apps-utils/blob/master/LICENSE
 
-Google Apps のユーティリティコマンドです
+Google Apps for Work の管理者用ユーティリティコマンドです
 
 # Installation
 
@@ -107,3 +109,7 @@ $ go get github.com/urfave/cli
 # License
 
 MIT License
+
+# Author
+
+[Hiroki Yagita](https://github.com/yagihiro)
