@@ -12,10 +12,14 @@ import (
 // group list ----------------------------------------------
 
 var commandGroupList = cli.Command{
-	Name:        "grouplist",
-	Usage:       "Show current groups",
-	Description: "Show current groups on Google Apps for Work",
-	Action:      doGroupList,
+	Name:  "grouplist",
+	Usage: "Show current groups",
+	Description: `Show current groups on Google Apps for Work
+
+			The record format:
+			   [ID] EMAIL (NAME DESCRIPTION)
+			`,
+	Action: doGroupList,
 }
 
 func doGroupList(c *cli.Context) error {
@@ -34,7 +38,7 @@ func doGroupList(c *cli.Context) error {
 		fmt.Print("No groups found.\n")
 	} else {
 		for _, g := range r.Groups {
-			fmt.Printf("%v (%v: %v)\n", g.Email, g.Name, g.Description)
+			fmt.Printf("[%v] %v (%v: %v)\n", g.Id, g.Email, g.Name, g.Description)
 		}
 	}
 
