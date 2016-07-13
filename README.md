@@ -1,5 +1,7 @@
 # google-apps-utils
 
+[license]: https://github.com/yagihiro/google-apps-utils/blob/master/LICENSE
+
 Google Apps のユーティリティコマンドです
 
 # Installation
@@ -60,6 +62,13 @@ $ google-apps-utils grouplist
 グループを追加します。
 ```
 $ google-apps-utils groupcreate -e email -d description -n name
+```
+
+### グループのメンバーを表示
+
+グループのメンバーを一覧表示します
+```
+$ google-apps-utils groupmemberlist -k groupKey
 ```
 
 ### トークンのリセット

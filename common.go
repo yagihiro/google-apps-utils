@@ -41,7 +41,8 @@ func GetService() (*admin.Service, error) {
 
 	config, err := google.ConfigFromJSON(b,
 		admin.AdminDirectoryUserScope,
-		admin.AdminDirectoryGroupScope)
+		admin.AdminDirectoryGroupScope,
+		admin.AdminDirectoryGroupMemberScope)
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 		return nil, err

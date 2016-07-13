@@ -13,8 +13,8 @@ import (
 
 var commandGroupList = cli.Command{
 	Name:  "grouplist",
-	Usage: "Show current groups",
-	Description: `Show current groups on Google Apps for Work
+	Usage: "Shows current groups",
+	Description: `Shows current groups on Google Apps for Work
 
 			The record format:
 			   [ID] EMAIL (NAME DESCRIPTION)
@@ -31,6 +31,7 @@ func doGroupList(c *cli.Context) error {
 	r, err := srv.Groups.List().Customer("my_customer").Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve groups in domain. %v", err)
+		return nil
 	}
 
 	count := len(r.Groups)
@@ -82,6 +83,44 @@ func doGroupCreate(c *cli.Context) error {
 		log.Fatalf("Cannot create group in domain. %v", err)
 	} else {
 		log.Printf("Succeed to create group: %v", group2)
+	}
+
+	return nil
+}
+
+// group member list ----------------------------------------------
+
+var commandGroupMemberList = cli.Command{
+	Name:        "groupmemberlist",
+	Usage:       "Shows a list of all members in a group",
+	Description: "Shows a list of all members in a group on Google Apps for Work",
+	Action:      doGroupMemberList,
+	Flags: []cli.Flag{
+		cli.StringFlag{Name: "key, k", Value: "", Usage: "The group key"},
+	},
+}
+
+func doGroupMemberList(c *cli.Context) error {
+	srv, err := GetService()
+	if err != nil {
+		return nil
+	}
+
+	groupKey := c.String("key")
+
+	r, err := srv.Members.List(groupKey).Do()
+	if err != nil {
+		log.Fatalf("Unable to retrieve group members in domain. %v", err)
+		return nil
+	}
+
+	count := len(r.Members)
+	if count == 0 {
+		fmt.Print("No group members found.\n")
+	} else {
+		for _, m := range r.Members {
+			fmt.Printf("%v\n", m.Email)
+		}
 	}
 
 	return nil
