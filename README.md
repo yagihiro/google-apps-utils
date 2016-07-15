@@ -40,38 +40,46 @@ $ google-apps-utils --help
 
 ### ユーザー一覧を表示
 
-ドメインに所属する現在の全ユーザーリストをターミナルに表示します。
+ドメインに所属する全ユーザーリストをターミナルに表示します。
 ```
 $ google-apps-utils list
 ```
 
 ### ユーザーを追加
 
-ユーザーを追加します。ターミナルに初期パスワードが表示されるので、primaryemail と合わせてユーザーにお伝えください。
+ドメインにユーザーを追加します。ターミナルに初期パスワードが表示されるので、primaryemail と合わせてユーザーにお伝えください。
 ```
 $ google-apps-utils create -g givenname -f familyname -e primaryemail
 ```
 
 ### グループ一覧を表示
 
-ドメインに所属する現在の全グループリストをターミナルに表示します。
+ドメインに所属する全グループリストをターミナルに表示します。
 ```
 $ google-apps-utils grouplist
 ```
 
 ### グループを追加
 
-グループを追加します。
+ドメインにグループを追加します。
 ```
 $ google-apps-utils groupcreate -e email -d description -n name
 ```
 
 ### グループのメンバーを表示
 
-グループのメンバーを一覧表示します
+ドメインに所属するグループのメンバーを一覧表示します
 ```
 $ google-apps-utils groupmemberlist -k groupKey
 ```
+
+### グループメンバーを追加
+
+ドメインに所属するグループにメンバーを追加します。
+```
+$ google-apps-utils groupmembercreate -k groupKey -e email -r role
+```
+
 
 ### トークンのリセット
 

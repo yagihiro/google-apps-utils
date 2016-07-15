@@ -119,9 +119,88 @@ func doGroupMemberList(c *cli.Context) error {
 		fmt.Print("No group members found.\n")
 	} else {
 		for _, m := range r.Members {
-			fmt.Printf("%v\n", m.Email)
+			fmt.Printf("%v, %v\n", m.Email, m.Role)
 		}
 	}
+
+	return nil
+}
+
+// group create ----------------------------------------------
+
+var commandGroupMemberCreate = cli.Command{
+	Name:        "groupmembercreate",
+	Usage:       "Add a member to the specified group",
+	Description: "Add a member to the specified group on Google Apps for Work",
+	Action:      doGroupMemberCreate,
+	Flags: []cli.Flag{
+		cli.StringFlag{Name: "key, k", Value: "", Usage: "The group key"},
+		cli.StringFlag{Name: "email, e", Value: "", Usage: "The member's email address"},
+		cli.StringFlag{Name: "role, r", Value: "", Usage: "A group member's role can be: OWNER / MANAGER / MEMBER. The default is MEMBER, see: https://goo.gl/VIo3zH"},
+	},
+}
+
+// Role is a group member role
+type Role int
+
+const (
+	// DEFAULT equals MEMBER
+	DEFAULT Role = iota
+	// OWNER role can change send messages to the group, add or remove members, change member roles, change group's settings, and delete the group. An OWNER must be a member of the group.
+	OWNER
+	// MANAGER role is only available if the Google Groups for Business is enabled using the Admin console. A MANAGER role can do everything done by an OWNER role except make a member an OWNER or delete the group. A group can have multiple OWNER and MANAGER members.
+	MANAGER
+	// MEMBER role can subscribe to a group, view discussion archives, and view the group's membership list. For more information about member roles, see https://goo.gl/10gxHA.
+	MEMBER
+)
+
+func (r Role) String() string {
+	switch r {
+	case OWNER:
+		return "OWNER"
+	case MANAGER:
+		return "MANAGER"
+	default:
+		return "MEMBER"
+	}
+}
+
+func roleFromString(role string) Role {
+	switch {
+	case role == "OWNER":
+		return OWNER
+	case role == "MANAGER":
+		return MANAGER
+	default:
+		return MEMBER
+	}
+}
+
+func doGroupMemberCreate(c *cli.Context) error {
+	srv, err := GetService()
+	if err != nil {
+		return nil
+	}
+
+	groupKey := c.String("key")
+	email := c.String("email")
+	role := c.String("role")
+	roleStr := roleFromString(role)
+
+	member := &admin.Member{
+		Email: email,
+		Role:  roleStr.String(),
+	}
+
+	log.Printf("Key:%v, Email:%v, Role:%v[%v], Member:%v", groupKey, email, role, roleStr, member)
+
+	member2, err := srv.Members.Insert(groupKey, member).Do()
+	if err != nil {
+		log.Fatalf("Cannot add a member to the specified group in domain. %v", err)
+		return nil
+	}
+
+	log.Printf("Succeed to add a member to the specified group: %v, member: %v", groupKey, member2.Email)
 
 	return nil
 }
