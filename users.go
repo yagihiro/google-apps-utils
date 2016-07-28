@@ -18,12 +18,12 @@ var commandList = cli.Command{
 }
 
 func doList(c *cli.Context) error {
-	srv, err := GetService()
+	srv, err := NewService()
 	if err != nil {
 		return nil
 	}
 
-	r, err := srv.Users.List().Customer("my_customer").OrderBy("email").Do()
+	r, err := srv.directory.Users.List().Customer("my_customer").OrderBy("email").Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve users in domain. %v", err)
 	}
@@ -55,7 +55,7 @@ var commandCreate = cli.Command{
 }
 
 func doCreate(c *cli.Context) error {
-	srv, err := GetService()
+	srv, err := NewService()
 	if err != nil {
 		return nil
 	}
@@ -78,7 +78,7 @@ func doCreate(c *cli.Context) error {
 		ChangePasswordAtNextLogin: true,
 	}
 
-	user2, err := srv.Users.Insert(user).Do()
+	user2, err := srv.directory.Users.Insert(user).Do()
 	if err != nil {
 		log.Fatalf("Cannot create user in domain. %v", err)
 	} else {

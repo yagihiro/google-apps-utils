@@ -11,7 +11,7 @@ func main() {
 	app.Name = "google-apps-utils"
 	app.Version = Version
 	app.Author = "Hiroki Yagita"
-	app.Usage = "Google Apps Utils with Directory API"
+	app.Usage = "Google Apps Utils with Directory/Reports API"
 	app.Commands = Commands
 	app.Run(os.Args)
 }

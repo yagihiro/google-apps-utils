@@ -12,6 +12,6 @@ var commandReset = cli.Command{
 }
 
 func doReset(c *cli.Context) error {
-	ResetToken()
+	resetToken()
 	return nil
 }
