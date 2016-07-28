@@ -23,12 +23,12 @@ var commandGroupList = cli.Command{
 }
 
 func doGroupList(c *cli.Context) error {
-	srv, err := GetService()
+	srv, err := NewService()
 	if err != nil {
 		return nil
 	}
 
-	r, err := srv.Groups.List().Customer("my_customer").Do()
+	r, err := srv.directory.Groups.List().Customer("my_customer").Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve groups in domain. %v", err)
 		return nil
@@ -61,7 +61,7 @@ var commandGroupCreate = cli.Command{
 }
 
 func doGroupCreate(c *cli.Context) error {
-	srv, err := GetService()
+	srv, err := NewService()
 	if err != nil {
 		return nil
 	}
@@ -78,7 +78,7 @@ func doGroupCreate(c *cli.Context) error {
 		Name:        name,
 	}
 
-	group2, err := srv.Groups.Insert(group).Do()
+	group2, err := srv.directory.Groups.Insert(group).Do()
 	if err != nil {
 		log.Fatalf("Cannot create group in domain. %v", err)
 	} else {
@@ -101,14 +101,14 @@ var commandGroupMemberList = cli.Command{
 }
 
 func doGroupMemberList(c *cli.Context) error {
-	srv, err := GetService()
+	srv, err := NewService()
 	if err != nil {
 		return nil
 	}
 
 	groupKey := c.String("key")
 
-	r, err := srv.Members.List(groupKey).Do()
+	r, err := srv.directory.Members.List(groupKey).Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve group members in domain. %v", err)
 		return nil
@@ -177,7 +177,7 @@ func roleFromString(role string) Role {
 }
 
 func doGroupMemberCreate(c *cli.Context) error {
-	srv, err := GetService()
+	srv, err := NewService()
 	if err != nil {
 		return nil
 	}
@@ -194,7 +194,7 @@ func doGroupMemberCreate(c *cli.Context) error {
 
 	log.Printf("Key:%v, Email:%v, Role:%v[%v], Member:%v", groupKey, email, role, roleStr, member)
 
-	member2, err := srv.Members.Insert(groupKey, member).Do()
+	member2, err := srv.directory.Members.Insert(groupKey, member).Do()
 	if err != nil {
 		log.Fatalf("Cannot add a member to the specified group in domain. %v", err)
 		return nil

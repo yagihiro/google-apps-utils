@@ -8,25 +8,50 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"google.golang.org/api/admin/directory/v1"
+	ad "google.golang.org/api/admin/directory/v1"
+	ar "google.golang.org/api/admin/reports/v1"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
 
-// GetService は admin.Service をよしなに生成して返す関数です
-func GetService() (*admin.Service, error) {
+// Service is a wrapper struct for Google Apps Admin APIs
+type Service struct {
+	directory *ad.Service
+	reports   *ar.Service
+}
+
+func NewService() (*Service, error) {
 	b, err := getClientSecret()
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 		return nil, err
 	}
 
-	config, err := google.ConfigFromJSON(b,
-		admin.AdminDirectoryUserScope,
-		admin.AdminDirectoryGroupScope,
-		admin.AdminDirectoryGroupMemberScope)
+	directoryService, err := newDirectoryServiceWithSecret(b)
+	if err != nil {
+		return nil, err
+	}
+
+	reportsService, err := newReportsServiceWithSecret(b)
+	if err != nil {
+		return nil, err
+	}
+
+	service := &Service{
+		directory: directoryService,
+		reports:   reportsService,
+	}
+
+	return service, err
+}
+
+func newDirectoryServiceWithSecret(bytes []byte) (*ad.Service, error) {
+	config, err := google.ConfigFromJSON(bytes,
+		ad.AdminDirectoryUserScope,
+		ad.AdminDirectoryGroupScope,
+		ad.AdminDirectoryGroupMemberScope)
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 		return nil, err
@@ -34,9 +59,28 @@ func GetService() (*admin.Service, error) {
 
 	ctx := context.Background()
 	client := getClient(ctx, config)
-	srv, err := admin.New(client)
+	srv, err := ad.New(client)
 	if err != nil {
 		log.Fatalf("Unable to retrieve directory Client %v", err)
+		return nil, err
+	}
+
+	return srv, err
+}
+
+func newReportsServiceWithSecret(bytes []byte) (*ar.Service, error) {
+	config, err := google.ConfigFromJSON(bytes,
+		ar.AdminReportsAuditReadonlyScope)
+	if err != nil {
+		log.Fatalf("Unable to parse client secret file to config: %v", err)
+		return nil, err
+	}
+
+	ctx := context.Background()
+	client := getClient(ctx, config)
+	srv, err := ar.New(client)
+	if err != nil {
+		log.Fatalf("Unable to retrieve reports client %v", err)
 		return nil, err
 	}
 
