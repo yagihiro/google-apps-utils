@@ -18,10 +18,13 @@ import (
 
 // Service is a wrapper struct for Google Apps Admin APIs
 type Service struct {
-	directory *ad.Service
-	reports   *ar.Service
+	directory      *ad.Service
+	directoryToken *Token
+	reports        *ar.Service
+	reportsToken   *Token
 }
 
+// NewService is the constructor
 func NewService() (*Service, error) {
 	b, err := getClientSecret()
 	if err != nil {
@@ -29,25 +32,39 @@ func NewService() (*Service, error) {
 		return nil, err
 	}
 
-	directoryService, err := newDirectoryServiceWithSecret(b)
+	directoryToken, err := NewToken("directory-token.json")
+	if err != nil {
+		log.Fatalf("Unable to create token object: %v", err)
+		return nil, err
+	}
+
+	directoryService, err := newDirectoryServiceWithSecret(b, directoryToken)
 	if err != nil {
 		return nil, err
 	}
 
-	reportsService, err := newReportsServiceWithSecret(b)
+	reportsToken, err := NewToken("reports-token.json")
+	if err != nil {
+		log.Fatalf("Unable to create token object: %v", err)
+		return nil, err
+	}
+
+	reportsService, err := newReportsServiceWithSecret(b, reportsToken)
 	if err != nil {
 		return nil, err
 	}
 
 	service := &Service{
-		directory: directoryService,
-		reports:   reportsService,
+		directory:      directoryService,
+		directoryToken: directoryToken,
+		reports:        reportsService,
+		reportsToken:   reportsToken,
 	}
 
 	return service, err
 }
 
-func newDirectoryServiceWithSecret(bytes []byte) (*ad.Service, error) {
+func newDirectoryServiceWithSecret(bytes []byte, token *Token) (*ad.Service, error) {
 	config, err := google.ConfigFromJSON(bytes,
 		ad.AdminDirectoryUserScope,
 		ad.AdminDirectoryGroupScope,
@@ -58,7 +75,7 @@ func newDirectoryServiceWithSecret(bytes []byte) (*ad.Service, error) {
 	}
 
 	ctx := context.Background()
-	client := getClient(ctx, config)
+	client := getClient(ctx, config, token)
 	srv, err := ad.New(client)
 	if err != nil {
 		log.Fatalf("Unable to retrieve directory Client %v", err)
@@ -68,7 +85,7 @@ func newDirectoryServiceWithSecret(bytes []byte) (*ad.Service, error) {
 	return srv, err
 }
 
-func newReportsServiceWithSecret(bytes []byte) (*ar.Service, error) {
+func newReportsServiceWithSecret(bytes []byte, token *Token) (*ar.Service, error) {
 	config, err := google.ConfigFromJSON(bytes,
 		ar.AdminReportsAuditReadonlyScope)
 	if err != nil {
@@ -77,7 +94,7 @@ func newReportsServiceWithSecret(bytes []byte) (*ar.Service, error) {
 	}
 
 	ctx := context.Background()
-	client := getClient(ctx, config)
+	client := getClient(ctx, config, token)
 	srv, err := ar.New(client)
 	if err != nil {
 		log.Fatalf("Unable to retrieve reports client %v", err)
@@ -124,17 +141,11 @@ func getClientSecret() ([]byte, error) {
 	return b, err
 }
 
-func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
-	cacheFile, err := tokenCacheFile()
+func getClient(ctx context.Context, config *oauth2.Config, token *Token) *http.Client {
+	tok, err := token.tokenFromFile()
 	if err != nil {
-		log.Fatalf("Unable to get path to cached credential file. %v", err)
-		return nil
-	}
-
-	tok, err := tokenFromFile(cacheFile)
-	if err != nil {
-		tok = getTokenFromWeb(config)
-		saveToken(cacheFile, tok)
+		tok = token.getTokenFromWeb(config)
+		token.saveToken(tok)
 	}
 
 	return config.Client(ctx, tok)

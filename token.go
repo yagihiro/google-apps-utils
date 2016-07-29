@@ -11,7 +11,27 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
+// Token is a token for Google Apps APIs
+type Token struct {
+	fileName string
+	filePath string
+}
+
+// NewToken is the constructor
+func NewToken(fileName string) (*Token, error) {
+	if len(fileName) == 0 {
+		err := fmt.Errorf("You must specify a fileName parameter")
+		return nil, err
+	}
+
+	token := &Token{
+		fileName: fileName,
+	}
+
+	return token, nil
+}
+
+func (t *Token) getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 
 	fmt.Printf("Go to the following link in your browser then tyep the authorization code: \n%v\n", authURL)
@@ -29,7 +49,7 @@ func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 	return tok
 }
 
-func tokenCacheFile() (string, error) {
+func (t *Token) tokenCacheFile() (string, error) {
 	path, err := profilePath()
 	if err != nil {
 		log.Fatalf("Unable to get profile path: %v", err)
@@ -40,27 +60,36 @@ func tokenCacheFile() (string, error) {
 		os.MkdirAll(path, 0700)
 	}
 
-	return filepath.Join(path, url.QueryEscape("token.json")), err
+	t.filePath = filepath.Join(path, url.QueryEscape(t.fileName))
+
+	return t.filePath, err
 }
 
-func tokenFromFile(file string) (*oauth2.Token, error) {
-	f, err := os.Open(file)
+func (t *Token) tokenFromFile() (*oauth2.Token, error) {
+	cacheFile, err := t.tokenCacheFile()
 	if err != nil {
+		log.Fatalf("Unable to get path to cached credential file. %v", err)
 		return nil, err
 	}
 
-	t := &oauth2.Token{}
-	err = json.NewDecoder(f).Decode(t)
+	f, err := os.Open(cacheFile)
+	if err != nil {
+		log.Fatalf("Unable to open path to cached credential file. %v", err)
+		return nil, err
+	}
+
+	ot := &oauth2.Token{}
+	err = json.NewDecoder(f).Decode(ot)
 
 	defer f.Close()
 
-	return t, err
+	return ot, err
 }
 
-func saveToken(file string, token *oauth2.Token) {
-	fmt.Printf("Saving credential file to: %s\n", file)
+func (t *Token) saveToken(token *oauth2.Token) {
+	fmt.Printf("Saving credential file to: %s\n", t.filePath)
 
-	f, err := os.Create(file)
+	f, err := os.Create(t.filePath)
 	if err != nil {
 		log.Fatalf("Unable to cache oauth token: %v", err)
 	}
@@ -70,15 +99,12 @@ func saveToken(file string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func resetToken() {
-	path, err := tokenCacheFile()
+func (t *Token) resetToken() {
+	path, err := t.tokenCacheFile()
 	if err != nil {
 		log.Fatalf("Unable to get path to cached credential file. %v", err)
 		return
 	}
 
-	if err := os.Remove(path); err != nil {
-		log.Fatalf("Unable to remove cached credential file. %v", err)
-		return
-	}
+	os.Remove(path)
 }

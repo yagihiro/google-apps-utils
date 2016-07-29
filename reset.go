@@ -1,6 +1,13 @@
 package main
 
-import "github.com/urfave/cli"
+import (
+	"log"
+	"net/url"
+	"os"
+	"path/filepath"
+
+	"github.com/urfave/cli"
+)
 
 // reset ------------------------------------------------
 
@@ -12,6 +19,20 @@ var commandReset = cli.Command{
 }
 
 func doReset(c *cli.Context) error {
-	resetToken()
+	path, err := profilePath()
+	if err != nil {
+		log.Fatalf("Unable to get profile path: %v", err)
+		return err
+	}
+
+	v010TokenPath := filepath.Join(path, url.QueryEscape("token.json"))
+	os.Remove(v010TokenPath)
+
+	dpath := filepath.Join(path, url.QueryEscape("directory-token.json"))
+	os.Remove(dpath)
+
+	rpath := filepath.Join(path, url.QueryEscape("reports-token.json"))
+	os.Remove(rpath)
+
 	return nil
 }

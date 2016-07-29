@@ -11,5 +11,5 @@ var Commands = []cli.Command{
 	commandGroupCreate,
 	commandGroupMemberList,
 	commandGroupMemberCreate,
-	// commandReports,
+	commandReports,
 }
